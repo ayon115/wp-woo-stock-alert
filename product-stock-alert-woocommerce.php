@@ -101,8 +101,8 @@ function Product_stock_alert_include_admin_css() {
     wp_enqueue_script('jquery');
     wp_enqueue_script( 'Product_stock_alert_admin_js', plugins_url('assets/js/instock-email-alert-admin.js',__FILE__ ), false, '1.0');
 }
- 
-// DB - Create table on first activation 
+
+// DB - Create table on first activation
 register_activation_hook( __FILE__, 'Product_stock_alert_install' );
 
 // DB - Versioning
@@ -139,7 +139,7 @@ function Product_stock_alert_update_db_check() {
 // Email Notifications - Send Email
 add_action('woocommerce_product_set_stock_status', 'Product_stock_alert_check_status', 10, 2);
 function Product_stock_alert_check_status($productId, $status) {
-    if ($status == "instock"){	
+    if ($status == "instock"){
         // Product details
         $prod_title = get_the_title($productId);
         $prod_link = get_the_permalink($productId);
@@ -196,8 +196,8 @@ function Product_stock_alert_save_email($email, $productid){
 }
 
 if ( isset($_POST['alert_email']) && !empty($_POST['alert_email']) ) {
-    $the_email = $_POST['alert_email'];
-    $id = $_POST['alert_id'];
+    $the_email = sanitize_email($_POST['alert_email']);
+    $id = sanitize_text_field($_POST['alert_id']);
     if ( filter_var($the_email, FILTER_VALIDATE_EMAIL) && is_numeric($id) ) {
         Product_stock_alert_save_email($the_email, $id);
         add_filter( 'woocommerce_single_product_summary', 'Product_stock_alert_save_sent', 80 );
@@ -247,7 +247,7 @@ function Product_stock_alert_form($type = NULL){
                 <input type="email" name="alert_email" id="alert_email" placeholder="' . $placeholder . '" />
                 <input type="hidden" name="alert_id" id="alert_id" value="' . get_the_ID() . '"/>
                 <input type="submit" value="' . $submit_value . '" class="" />
-            </form> 
+            </form>
         ';
         if ($type == 'get') {
             return $form;
@@ -375,7 +375,7 @@ function Product_stock_alert_options() {
         </table>
     </div>
     <div style="clear:both;"></div>
-    
+
     <?php
 }
 
@@ -409,4 +409,3 @@ function Product_stock_alert_settings_link($links) {
   array_unshift($links, $settings_link);
   return $links;
 }
-
